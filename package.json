@@ -1,0 +1,13 @@
+{
+  "name": "raylib-game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "r.a.m",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx -y raylib"
+  },
+  "dependencies": {
+    "raylib": "^0.9.0"
+  }
+}
