@@ -26,6 +26,7 @@ class Obstacle extends Entity{
 class Trapizum extends Entity{
   constructor(x, y, topWidth, bottomWidth, height, isCenter = true){
     super(x, y);
+    this.i=0;
     this.topWidth = topWidth;
     this.bottomWidth = bottomWidth;
     this.height = height;
@@ -37,23 +38,29 @@ class Trapizum extends Entity{
         new Vector2(x - topWidth/2, y - height/2)
       ],
       triangleR:[
-        new Vector2(x + bottomWidth/2, y + height/2),
+        new Vector2(x + topWidth/2, y - height/2),
         new Vector2(x + topWidth/2, y + height/2),
-        new Vector2(x + topWidth/2, y - height/2)
+        new Vector2(x + bottomWidth/2, y + height/2)
       ],
       rectangle:[x - topWidth/2, y - height/2]
     };
-    console.log(this.points.triangleR)
   }
   draw(){
-    raylib.DrawTriangle(this.points.triangleL[0], this.points.triangleL[1], this.points.triangleL[2], raylib.RED);
-    raylib.DrawTriangle(this.points.triangleR[0], this.points.triangleR[1], this.points.triangleR[2], raylib.RED);
+    raylib.DrawTriangle(this.points.triangleL[0], this.points.triangleL[1], this.points.triangleL[2], this.color);
+    raylib.DrawTriangle(this.points.triangleR[0], this.points.triangleR[1], this.points.triangleR[2], this.color);
     raylib.DrawRectangle(this.points.rectangle[0], this.points.rectangle[1], this.topWidth, this.height, this.color);
   }
   update(){}
   /** @param {Player} player */
   isCollidingPlayer(player){
-    return false;
+    return raylib.CheckCollisionPointTriangle(player, this.points.triangleL[0], this.points.triangleL[1], this.points.triangleL[2])
+      || raylib.CheckCollisionPointTriangle(player, this.points.triangleR[0], this.points.triangleR[1], this.points.triangleR[2])
+      || raylib.CheckCollisionPointRec(player, {
+        x: this.points.rectangle[0],
+        y: this.points.rectangle[1],
+        width: this.topWidth,
+        height: this.height
+      });
   }
   /** @param {Bullet} bullet */
   isCollidingBullet(bullet){
