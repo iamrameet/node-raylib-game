@@ -1,14 +1,18 @@
 const { Vector2 } = require("./physics");
 const { GameScreen, Constant } = require("./constatnts");
 const { Player } = require('./player');
-const { Obstacle } = require('./obstacle');
+const { Obstacle, Trapizum } = require('./obstacle');
 const { Bullet } = require('./bullet');
 const { ParticleSystem } = require("./particle");
+const { Level } = require("./level");
+
+let level = new Level();
+level.platforms.push(new Trapizum(level.width/2, level.height/2, 200, 400, 100));
 
 const player = new Player(GameScreen.width/2, GameScreen.height/4 - 300);
 const obstacles = [
-  new Obstacle(GameScreen.width/4, GameScreen.height/4, 20, GameScreen.height/2),
-  new Obstacle(GameScreen.width/4, GameScreen.height/2 + 340, GameScreen.width/2, 20),
+  // new Obstacle(GameScreen.width/4, GameScreen.height/4, 20, GameScreen.height/2),
+  // new Obstacle(GameScreen.width/4, GameScreen.height/2 + 340, GameScreen.width/2, 20),
   new Obstacle(GameScreen.width/4, GameScreen.height/2 + 40, GameScreen.width/2, 20)
 ];
 
@@ -26,6 +30,7 @@ function removeBullet(index){
 
 /** @param {import("raylib")} raylib */
 function main(raylib) {
+  level.draw();
   if(player.isAlive){
     player.velocity.add(Constant.gravity);
     for(const obstacle of obstacles){
