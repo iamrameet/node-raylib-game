@@ -29,18 +29,18 @@ class Gun extends Entity {
     let offset = 0;
     if(player.facingDirection.x<0){
       offset = - player.mass;
-      raylib.DrawRectangle(this.x + offset + 16, this.y + 6, 8, 6, raylib.RED);
+      raylib.DrawRectangle(this.position.x + offset + 16, this.position.y + 6, 8, 6, raylib.RED);
     }else{
-      raylib.DrawRectangle(this.x, this.y + 6, 8, 6, raylib.RED);
+      raylib.DrawRectangle(this.position.x, this.position.y + 6, 8, 6, raylib.RED);
     }
-    raylib.DrawRectangle(this.x + offset, this.y, 24, 6, raylib.RED);
+    raylib.DrawRectangle(this.position.x + offset, this.position.y, 24, 6, raylib.RED);
     const ammoRadius = 3,
       ammoMargin = 1;
     for(let b = 0; b < this.ammo; b++){
       const row = Math.floor(b/3);
       const column = b % 3;
-      const x = this.x + ammoRadius + ammoMargin + 2 * column * (ammoRadius + ammoMargin) + offset;
-      const y = this.y - ammoRadius - 2 * ammoMargin - 2 * row * (ammoRadius + ammoMargin);
+      const x = this.position.x + ammoRadius + ammoMargin + 2 * column * (ammoRadius + ammoMargin) + offset;
+      const y = this.position.y - ammoRadius - 2 * ammoMargin - 2 * row * (ammoRadius + ammoMargin);
       raylib.DrawCircle(x, y, ammoRadius, raylib.GOLD);
     }
   }
@@ -55,18 +55,18 @@ class Gun extends Entity {
         this.ammo = this.bulletCapacity;
     }else if(this.fireCooldown>0)
       this.fireCooldown--;
-    else if(raylib.IsKeyPressed(raylib.KEY_R)){
+    else if(raylib.IsMouseButtonPressed(raylib.MOUSE_BUTTON_LEFT)){
       const bullet=this.fire(player.facingDirection);
       bullets.push(bullet);
     }
   }
   /** @param {Vector2} target */
   fire(target) {
-    const bullet = new Bullet(this.x, this.y);
+    const bullet = new Bullet(this.position.x, this.position.y);
     const unitVector = Vector2.from(target);
     unitVector.scale(bullet.movementSpeed);
     bullet.movementForce=(unitVector);
-    // bullet.move(Vector2.subtract(target, this));
+    // bullet.move(Vector2.subtract(target, this.position));
     this.fireCooldown = this.attackSpeed;
     this.ammo--;
     if(this.ammo===0)

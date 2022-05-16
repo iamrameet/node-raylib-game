@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@raylib/api@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@raylib/api/-/api-4.0.0.tgz#493f5f42ebf5ba7eeb1e9f0a62adba9ed0a94bbe"
+  integrity sha512-U/TsyYPQDxkU1bG5cMdnmi2lfzz5tJRQBSYmwPdXn/P3puyFYe1tWkk0OzueS3zr/8j4yZbc6ibg5JMU0I4L5w==
+
 cross-fetch@^3.1.5:
   version "3.1.5"
   resolved "https://registry.npmjs.org/cross-fetch/-/cross-fetch-3.1.5.tgz"
@@ -21,10 +26,10 @@ node-fetch@2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-raylib@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/raylib/-/raylib-0.9.0.tgz#678e6e4c2dcb71d5b8d76ce700ae8a9a8a3668cc"
-  integrity sha512-YCQ0y/gGvlz7KZ7y/Bu9FjFHHo83blOP7O+1VQHPZSkPyyKg0XgOy1CAQa6KZS3dpxajbMfMO4eWQ/Hw/H1t1g==
+raylib@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/raylib/-/raylib-0.9.1.tgz#3979f796482009bc016cb38c6041702583efb0f3"
+  integrity sha512-XcBCxdHq/c+o/sh8i+5fLggLINaM+Vq3RS53JoqKk57DSsaiUUebFrqv7iNYdNZuTR124U0+H6smIm0uNbQIVQ==
   dependencies:
     cross-fetch "^3.1.5"
     module-alias "^2.2.2"

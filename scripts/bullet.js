@@ -20,15 +20,15 @@ class Bullet extends Entity {
     super(x, y);
   }
   draw(){
-    raylib.DrawCircle(this.x, this.y, this.size, this.color);
+    raylib.DrawCircle(this.position.x, this.position.y, this.size, this.color);
   }
   update(){
     // const resistance = Vector2.from(Constant.airResistance);
     // resistance.scale(-Math.sign());
     // this.movementForce.subtract(resistance);
     this.movementForce.add(Vector2.scale(Constant.gravity, this.size/2));
-    this.velocity.add(this.movementForce);
-    this.add(this.movementForce);
+    // this.velocity.add(this.movementForce);
+    this.position.add(this.movementForce);
   }
   /** @param {Vector2} direction */
   move(direction) {}

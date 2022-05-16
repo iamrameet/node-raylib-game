@@ -15,7 +15,12 @@ class Level{
       platform.draw();
     }
   }
-  update(){}
+  update(){
+    for(const index in this.platforms){
+      const platform = this.platforms[index];
+      platform.update();
+    }
+  }
 }
 
 module.exports = { Level };

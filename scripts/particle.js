@@ -1,4 +1,5 @@
 const raylib = require("raylib");
+const { Constant } = require("./constatnts");
 const { Entity } = require("./entity");
 const { Vector2 } = require("./physics");
 
@@ -54,15 +55,17 @@ class Particle extends Entity{
     this.color = color;
     this.radius = Math.floor(Math.random() * (maxSize - minSize)) + minSize;
     this.velocity = direction;
-    this.velocity.scale(8);
+    this.velocity.scale(12);
   }
   draw(){
     this.color.a = this.opacity;
-    raylib.DrawCircle(this.x, this.y, this.radius, this.color);
+    // raylib.DrawCircle(this.position.x, this.position.y, this.radius, this.color);
+    raylib.DrawRectangle(this.position.x - this.radius/2, this.position.y - this.radius/2, this.radius, this.radius, this.color);
   }
   update(){
-    this.add(this.velocity);
-    this.opacity -= 2;
+    this.velocity.scale(.93);
+    this.position.add(this.velocity);
+    this.opacity -= 5;
   }
 }
 
