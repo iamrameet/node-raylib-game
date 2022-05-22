@@ -7,12 +7,12 @@ const { ParticleSystem } = require('./particle');
 class Player extends Entity {
   maxHealth = 100;
   health = 100;
-  movementSpeed = 16;
-  jumpFactor = -8;
+  movementSpeed = 6;
+  jumpFactor = -14;
   /** Damage taken per second */
   damageTaken = 0;
   isAlive = true;
-  color = raylib.LIME;
+  color = raylib.GetColor(0xd35713ff);
   facingDirection = Vector2.zero();
   shield = new Shield();
   velocity = Vector2.zero();
@@ -34,9 +34,9 @@ class Player extends Entity {
     this.gun.draw(this);
   }
   drawHealthBar(){
-    const width = this.mass*2,
-      height = 8;
-    const x = this.position.x - this.mass,
+    const width = this.mass*3,
+      height = 4;
+    const x = this.position.x - this.mass*3/2,
       y = this.position.y - this.mass - height - 4;
     raylib.DrawRectangleLines(x, y, width, height, raylib.SKYBLUE);
     raylib.DrawRectangle(x, y, this.health/this.maxHealth * width, height, raylib.SKYBLUE);
@@ -64,9 +64,11 @@ class Player extends Entity {
     this.facingDirection = Vector2.subtract(mousePos, this.position);
     this.facingDirection.normalise();
     if(this.allowMovement.right && raylib.IsKeyDown(raylib.KEY_A)){
-      this.position.add(new Vector2(-5, 0));
+      const movementVector = Vector2.from(this.movementForce);
+      movementVector.scale(-1);
+      this.position.add(movementVector);
     }else if(this.allowMovement.left && raylib.IsKeyDown(raylib.KEY_D)){
-      this.position.add(new Vector2(5, 0));
+      this.position.add(this.movementForce);
     }
   }
 }

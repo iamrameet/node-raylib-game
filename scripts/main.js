@@ -4,11 +4,31 @@ const { GameScreen, Constant } = require("./constatnts");
 const { Player } = require('./player');
 const { Obstacle, Trapizum, Platform } = require('./obstacle');
 const { Bullet } = require('./bullet');
-const { ParticleSystem } = require("./particle");
+const { ParticleSystem, GravityParticleSystem } = require("./particle");
 const { Level } = require("./level");
+const SimplexNoise = require("simplex-noise");
 
 let level = new Level();
-// level.platforms.push(new Trapizum(level.width/2, level.height/2, 200, 400, 100));
+const noise = new SimplexNoise();
+
+const particleSystem = new GravityParticleSystem(Vector2.zero(), new Vector2(GameScreen.width, 0));
+let r=0;
+level.drawBackground = function(){
+  const size = 10;
+  for(let i = 0; i < size; i++)
+    for(let j = 0; j < size; j++){
+      const number = noise.noise2D(i, j);
+      const w = level.width / size;
+      const h = level.height / size;
+      raylib.DrawCircle(i*w, j*h, size/2, raylib.ColorAlpha(raylib.WHITE, number+1));
+      r += 0.001;
+    }
+  particleSystem.draw();
+};
+level.updateBackground = function(){
+  particleSystem.update();
+}
+level.platforms.push(new Trapizum(level.width/2, level.height, 200, 400, 100));
 
 const percentValue = (maxValue, percent) => percent * maxValue / 100;
 
@@ -25,6 +45,14 @@ const obstacles = [
   Platform.preset.FullHeight(GameScreen.width)
 ];
 
+/** @type {(() boolean) []} */
+const drawMethods = [];
+
+/** @param {number} index */
+function removeDrawMethod(index){
+  drawMethods.splice(index, 1);
+}
+
 /** @type {Bullet[]} */
 const bullets = [];
 /** @type {ParticleSystem[]} */
@@ -35,9 +63,11 @@ function removeBullet(index){
   const [deletedBullet] = bullets.splice(index, 1);
   deletedBullet.velocity.scale(-1);
   particles.push(new ParticleSystem(deletedBullet.position.x, deletedBullet.position.y, deletedBullet.velocity, null, 5, 4, 6));
+  drawMethods.push(deletedBullet.onHit());
 }
 
 function gameLoop() {
+  level.update();
   level.draw();
   if(player.isAlive){
     player.allowMovement.left = true;
@@ -71,6 +101,9 @@ function gameLoop() {
   }
   player.update(bullets, particles);
 
+  for(const obstacle of obstacles)
+    obstacle.update();
+
   for(const [index, bullet] of bullets.entries()){
     bullet.update();
     if(raylib.CheckCollisionCircles(player.position, player.mass, bullet, bullet.size)){
@@ -102,6 +135,9 @@ function gameLoop() {
     bullet.draw();
   for(const particle of particles)
     particle.draw();
+  for(const [index, method] of drawMethods.entries())
+    if(method())
+      removeDrawMethod(index);
 }
 
 module.exports = { gameLoop };

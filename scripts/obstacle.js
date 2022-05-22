@@ -9,12 +9,23 @@ class Obstacle extends Entity{
     super(x, y);
     this.width = width;
     this.height = height;
-    this.color = raylib.GetColor(0xe69301ff);
+    this.colorPrimary = raylib.GetColor(0x5a00b5ff);
+    this.colorSecondary = raylib.GetColor(0xff8800ff);
+    this.i = 0;
   }
   draw(){
-    raylib.DrawRectangle(this.position.x, this.position.y, this.width, this.height, this.color);
+    raylib.DrawRectangle(this.position.x, this.position.y, this.width, this.height, this.colorPrimary);
+    raylib.DrawRectangle(this.position.x, this.position.y, this.width, 4, raylib.WHITE);
+    raylib.DrawRectangleGradientV(this.position.x, this.position.y + 4, this.width, this.height/4, raylib.ColorAlpha(raylib.WHITE, 0.6), raylib.BLANK);
+    raylib.DrawRectangle(this.position.x, this.position.y + this.height - 4, this.width, 4, raylib.ColorAlpha(raylib.BLACK, 0.6));
+    raylib.DrawRectangleGradientV(this.position.x, this.position.y + this.height*3/4, this.width, this.height/4, raylib.BLANK, raylib.ColorAlpha(raylib.BLACK, 0.4));
+    // raylib.DrawRectangleGradientV(this.position.x + 5, this.position.y + 5, this.width - 10, this.height - 5, this.colorPrimary, this.colorSecondary);
   }
-  update(){}
+  update(){
+    this.i++;
+    if(this.i>359)
+      this.i = 0;
+  }
   /** @param {Player} player */
   isCollidingPlayer(player){
     return raylib.CheckCollisionCircleRec(player.position, player.mass, this);
@@ -26,14 +37,14 @@ class Obstacle extends Entity{
 }
 
 class Platform extends Obstacle{
-  constructor(cx, cy, width = 400, height = 40){
+  constructor(cx, cy, width = 240, height = 50){
     super(cx - width/2, cy - height/2, width, height);
   }
 }
 
 Platform.preset = {
-  FullWidth: y => new Platform(GameScreen.width/2, y, GameScreen.width, 1),
-  FullHeight: x => new Platform(x, GameScreen.height, 1, GameScreen.height)
+  FullWidth: y => new Platform(GameScreen.width/2, y, GameScreen.width, 2),
+  FullHeight: x => new Platform(x, GameScreen.height/2, 2, GameScreen.height)
 };
 
 class Box extends Obstacle{

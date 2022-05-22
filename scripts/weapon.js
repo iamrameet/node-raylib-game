@@ -6,8 +6,8 @@ const { Bullet } = require('./bullet');
 const { Entity } = require("./entity");
 
 class Gun extends Entity {
-  reloadSpeed = 100;
-  attackSpeed = 20;
+  reloadSpeed = 20;
+  attackSpeed = 10;
   fireRate;
   /** Bullet capacity */
   bulletCapacity = 10;
@@ -29,12 +29,12 @@ class Gun extends Entity {
     let offset = 0;
     if(player.facingDirection.x<0){
       offset = - player.mass;
-      raylib.DrawRectangle(this.position.x + offset + 16, this.position.y + 6, 8, 6, raylib.RED);
+      raylib.DrawRectangle(this.position.x + offset + 16, this.position.y + 6, 8, 6, player.color);
     }else{
-      raylib.DrawRectangle(this.position.x, this.position.y + 6, 8, 6, raylib.RED);
+      raylib.DrawRectangle(this.position.x, this.position.y + 6, 8, 6, player.color);
     }
-    raylib.DrawRectangle(this.position.x + offset, this.position.y, 24, 6, raylib.RED);
-    const ammoRadius = 3,
+    raylib.DrawRectangle(this.position.x + offset, this.position.y, 24, 6, player.color);
+    const ammoRadius = 2,
       ammoMargin = 1;
     for(let b = 0; b < this.ammo; b++){
       const row = Math.floor(b/3);
@@ -55,7 +55,7 @@ class Gun extends Entity {
         this.ammo = this.bulletCapacity;
     }else if(this.fireCooldown>0)
       this.fireCooldown--;
-    else if(raylib.IsMouseButtonPressed(raylib.MOUSE_BUTTON_LEFT)){
+    else if(raylib.IsMouseButtonDown(raylib.MOUSE_BUTTON_LEFT)){
       const bullet=this.fire(player.facingDirection);
       bullets.push(bullet);
     }
@@ -65,7 +65,7 @@ class Gun extends Entity {
     const bullet = new Bullet(this.position.x, this.position.y);
     const unitVector = Vector2.from(target);
     unitVector.scale(bullet.movementSpeed);
-    bullet.movementForce=(unitVector);
+    bullet.velocity=unitVector;
     // bullet.move(Vector2.subtract(target, this.position));
     this.fireCooldown = this.attackSpeed;
     this.ammo--;

@@ -1,15 +1,15 @@
 const raylib = require('raylib');
-const { Constant } = require('./constatnts');
+const { Constant, GameColor } = require('./constatnts');
 const { Entity } = require('./entity');
 const { Vector2 } = require('./physics');
 
 class Bullet extends Entity {
   size = 5;
   damage = 20;
-  movementSpeed = 20;
-  color = raylib.VIOLET;
+  movementSpeed = 30;
+  color = raylib.GOLD;
   movementForce = new Vector2(this.movementSpeed, 0);
-  velocity = Vector2.zero();
+  velocity = new Vector2(this.movementSpeed, 0);
   /** @type {number} */
   range = null;
   /**
@@ -26,12 +26,23 @@ class Bullet extends Entity {
     // const resistance = Vector2.from(Constant.airResistance);
     // resistance.scale(-Math.sign());
     // this.movementForce.subtract(resistance);
-    this.movementForce.add(Vector2.scale(Constant.gravity, this.size/2));
-    // this.velocity.add(this.movementForce);
-    this.position.add(this.movementForce);
+    this.velocity.add(Vector2.scale(Constant.gravity, this.size/4));
+    this.position.add(this.velocity);
   }
   /** @param {Vector2} direction */
   move(direction) {}
+  onHit(){
+    let opacity = 20;
+    // let color = raylib.ColorAlphaBlend(GameColor.background, this.color, raylib.BLANK);
+    return ()=>{
+      if(opacity<=0)
+        return true;
+      opacity-=2;
+      const color = raylib.ColorAlpha(this.color, opacity/40);
+      raylib.DrawCircle(this.position.x, this.position.y, this.size + 20 - opacity, color);
+      return false;
+    };
+  }
 }
 
 module.exports = {Bullet};

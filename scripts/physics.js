@@ -1,3 +1,5 @@
+const raylib = require("raylib");
+
 class Vector2 {
   constructor(x = 0, y = 0) {
     this.x = x;
@@ -10,26 +12,39 @@ class Vector2 {
   set(x, y) {
     this.x = x;
     this.y = y;
+    return this;
   }
   /** @param {Vector2} vector */
   add(vector) {
     this.x += vector.x;
     this.y += vector.y;
+    return this;
   }
   /** @param {Vector2} vector */
   subtract(vector) {
     this.x -= vector.x;
     this.y -= vector.y;
+    return this;
   }
   /** @param {Vector2} vector */
   scalar(vector) {
     this.x *= vector.x;
     this.y *= vector.y;
+    return this;
   }
   /** @param {Vector2} vector */
   divide(vector) {
     this.x /= vector.x;
     this.y /= vector.y;
+    return this;
+  }
+  /** @param {Vector2} vector */
+  dot(vector){
+    return this.x * vector.x + this.y * vector.y;
+  }
+  /** @param {Vector2} vector */
+  cross(vector){
+    return this.x * vector.y - this.y * vector.x;
   }
   mag() {
     return Math.sqrt(this.magSq());
@@ -39,7 +54,7 @@ class Vector2 {
   }
   normalise(){
     const magnitude = this.mag();
-    this.scale(1/magnitude, 1/magnitude);
+    return this.scale(magnitude === 0 ? 0 : 1/magnitude);
   }
   /** @param {number} value */
   scale(value) {
@@ -47,8 +62,20 @@ class Vector2 {
     this.y *= value;
     return this;
   }
+  invert(){
+    return this.scale(-1);
+  }
   signVector(){
     return new Vector2(Math.sign(this.x), Math.sign(this.y));
+  }
+  normalVector(){
+    return new Vector2(-this.y, this.x).normalise();
+  }
+  /** @abstract */
+  draw(x, y, scale = 1, color = raylib.YELLOW){
+    const vec = new Vector2(x, y).add(Vector2.from(this).scale(scale));
+    // raylib.DrawLine(x, y, x + this.x * scale, y + this.y * scale, color);
+    raylib.DrawLine(x, y, vec.x, vec.y, color);
   }
   /** @param {Vector2} vector */
   static from(vector) {
@@ -86,15 +113,11 @@ class Vector2 {
    * @param {number} value
    */
   static scale(vector, value) {
-    const vec = Vector2.from(vector);
-    vec.scale(value);
-    return vec;
+    return Vector2.from(vector).scale(value);
   }
   /** @param {Vector2} vector */
   static normalise(vector){
-    const vec = Vector2.from(vector);
-    vec.normalise();
-    return vec;
+    return Vector2.from(vector).normalise();
   }
   /**
    * @param {Vector2} v1
@@ -111,8 +134,8 @@ class Vector2 {
     return new Vector2(v1.x - v2.x, v1.y - v2.y);
   }
   /**
-   * @param {Vectro2} vector
-   * @param {Vectro2} target
+   * @param {Vector2} vector
+   * @param {Vector2} target
    * @param {number} maxDistance
   */
   static moveTowards(vector, target, maxDistance){
@@ -132,4 +155,52 @@ class Vector2 {
   }
 }
 
-module.exports = {Vector2};
+class Matrix{
+  /** @type {number[][]} */
+  #data = [];
+  /**
+   * @param {number} rows
+   * @param {number} columns
+  */
+  constructor(rows, columns){
+    this.rows = rows;
+    this.columns = columns;
+    this.#data = Array.from({length: rows}, ()=>new Array(columns).fill(0));
+  }
+  /**
+   * @param {number} row
+   * @param {number} column
+   * @param {number} value
+  */
+  set(row, column, value){
+    this.#data[row][column] = value;
+    return value;
+  }
+  /**
+   * @param {number} row
+   * @param {number} column
+  */
+  get(row, column){
+    return this.#data[row][column];
+  }
+  /** @param {Vector2} vector */
+  multiplyVector(vector){
+    const result = Vector2.zero();
+    result.x = this.#data[0][0] * vector.x + this.#data[0][1] * vector.y;
+    result.y = this.#data[1][0] * vector.x + this.#data[1][1] * vector.y;
+    return result;
+  }
+  /** @param {number} angle */
+  static rotationMatrix(angle){
+    const matrix = new Matrix(2, 2);
+    const sin = Math.sin(angle);
+    const cos = Math.cos(angle);
+    matrix.set(0, 0, cos);
+    matrix.set(0, 1, -sin);
+    matrix.set(1, 0, sin);
+    matrix.set(1, 1, cos);
+    return matrix;
+  }
+}
+
+module.exports = { Vector2, Matrix };
